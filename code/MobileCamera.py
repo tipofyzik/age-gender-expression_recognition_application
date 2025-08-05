@@ -2,17 +2,22 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-from kivy.uix.widget import Widget
 from kivy.uix.camera import Camera
+from kivy.uix.widget import Widget
 from kivy.graphics import PushMatrix, PopMatrix, Rotate
-from AttributesPredictor import AttributesPredictor
 from kivy.clock import Clock
 import os
 import logging
 
+# Только на Android
+from jnius import autoclass, cast
+from android.permissions import request_permissions, Permission, check_permission
+from android import activity
+
+from AttributesPredictor import AttributesPredictor
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
 
 
 class RotatedCameraWidget(Widget):
@@ -39,30 +44,7 @@ class RotatedCameraWidget(Widget):
         self.camera.pos = (self.center_x - self.camera.width / 2,
                            self.center_y - self.camera.height / 2)
 
-from jnius import autoclass, cast
-from android.permissions import request_permissions, Permission, check_permission
-from android import activity
 
-
-
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.camera import Camera
-from kivy.uix.widget import Widget
-from kivy.graphics import PushMatrix, PopMatrix, Rotate
-from kivy.clock import Clock
-import os
-import logging
-
-# Только на Android
-from android.permissions import request_permissions, Permission, check_permission
-
-from AttributesPredictor import AttributesPredictor
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 
 class RotatedCameraWidget(Widget):
