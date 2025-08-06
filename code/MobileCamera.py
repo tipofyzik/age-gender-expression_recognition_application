@@ -9,48 +9,25 @@ from kivy.clock import Clock
 import os
 import logging
 
-# Только на Android
+# For android only
 from jnius import autoclass, cast
 from android.permissions import request_permissions, Permission, check_permission
 from android import activity
 
 from AttributesPredictor import AttributesPredictor
 
+
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-
 class RotatedCameraWidget(Widget):
     def __init__(self, **kwargs):
+        """
+        
+        """
         super().__init__(**kwargs)
-
-        with self.canvas.before:
-            PushMatrix()
-            self.rot = Rotate(angle=90, origin=self.center)
-
-        with self.canvas.after:
-            PopMatrix()
-
-        self.camera = Camera(index=1, resolution=(640, 480), play=True)
-        self.camera.size_hint = (None, None)
-        self.add_widget(self.camera)
-
-        self.bind(size=self.update_layout, pos=self.update_layout)
-        Clock.schedule_once(self.update_layout, 1)
-
-    def update_layout(self, *args):
-        self.rot.origin = self.center
-        self.camera.size = (self.height, self.width)
-        self.camera.pos = (self.center_x - self.camera.width / 2,
-                           self.center_y - self.camera.height / 2)
-
-
-
-
-class RotatedCameraWidget(Widget):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.camera = Camera(index=1, resolution=(640, 480), play=True)
+        self.camera = Camera(index=1, resolution=(1280, 720), play=True)
         self.camera.size_hint = (None, None)
         self.camera.size = (self.width, self.height)
         self.add_widget(self.camera)
@@ -66,6 +43,9 @@ class RotatedCameraWidget(Widget):
         Clock.schedule_once(self.update_layout, 0)
 
     def update_layout(self, *args):
+        """
+        
+        """
         self.rot.origin = self.center
         self.camera.size = (self.height, self.width)
         self.camera.pos = (
@@ -74,8 +54,15 @@ class RotatedCameraWidget(Widget):
         )
 
 
+
 class MobileCamera(App):
+    """
+    
+    """
     def build(self):
+        """
+        
+        """
         self.permission_granted = False
         self.layout = BoxLayout(orientation='vertical')
         self.label = Label(text="Waiting for permission...", size_hint=(1, 0.3))
@@ -83,6 +70,9 @@ class MobileCamera(App):
         return self.layout
 
     def on_start(self):
+        """
+        
+        """
         needed = [
             Permission.CAMERA,
             Permission.WRITE_EXTERNAL_STORAGE,
@@ -97,6 +87,9 @@ class MobileCamera(App):
             request_permissions(needed, self.permission_callback)
 
     def permission_callback(self, permissions, grants):
+        """
+        
+        """
         if all(grants):
             logger.info("All permissions granted.")
             Clock.schedule_once(lambda dt: self.initialize_ui(), 0)
@@ -105,6 +98,9 @@ class MobileCamera(App):
             self.label.text = "Permissions denied. Cannot use camera."
 
     def initialize_ui(self, *args):
+        """
+        
+        """
         self.layout.clear_widgets()
 
         self.predictor = AttributesPredictor()
@@ -123,6 +119,9 @@ class MobileCamera(App):
         self.layout.add_widget(self.label)
 
     def take_picture(self, instance):
+        """
+        
+        """
         try:
             filepath = os.path.join(self.user_data_dir, "photo.png")
             self.camera_widget.camera.export_to_png(filepath)
@@ -133,6 +132,9 @@ class MobileCamera(App):
             self.label.text = f"Camera error: {e}"
 
     def process_picture(self, filepath):
+        """
+        
+        """
         try:
             if os.path.exists(filepath):
                 result = self.predictor.analyze_image(filepath)

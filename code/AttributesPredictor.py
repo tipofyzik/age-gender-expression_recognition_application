@@ -1,28 +1,36 @@
 from PIL import Image
 import numpy as np
 import logging
-import traceback
 
-# tflite fallback
+# For mobile application
 try:
     import tflite_runtime.interpreter as tflite
 except ImportError as e:
     raise ImportError("tflite_runtime не установлен. Убедитесь, что он указан в requirements в buildozer.spec") from e
 
+"""Manually importing library for face detection to work. Library has custom fixes so it suits the project goals.
+Source: https://github.com/patlevin/face-detection-tflite
+"""
 import sys
 sys.path.insert(0, './libs')
 from fdlite import FaceDetection, FaceDetectionModel
 
 
 
-# Логгер
+# Logger
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
 
 class AttributesPredictor:
-    def __init__(self):
+    """
+    
+    """
+    def __init__(self) -> None:
+        """
+        
+        """
         try:
             self.age_interpreter = tflite.Interpreter(model_path="models/MobileNet_Age.tflite")
             self.age_interpreter.allocate_tensors()
@@ -34,21 +42,27 @@ class AttributesPredictor:
             self.emotion_interpreter.allocate_tensors()
 
             self.face_interpreter = FaceDetection(model_type=FaceDetectionModel.FRONT_CAMERA, model_path="models/")
-        except Exception as e:
+        except Exception:
             logger.error("Failed to initialize interpreters or face detector", exc_info=True)
             raise
 
-    def preprocess_face(self, face_roi, target_size):
+    def preprocess_face(self, face_roi, target_size: tuple[int, int]):
+        """
+        
+        """
         try:
             face_img = face_roi.resize(target_size)
             face_array = np.array(face_img).astype('float32') / 255.0
             face_array = np.expand_dims(face_array, axis=0)
             return face_array
-        except Exception as e:
+        except Exception:
             logger.error("Error in preprocess_face", exc_info=True)
             raise
 
     def detect_faces(self, image_path):
+        """
+        
+        """
         try:
             image = Image.open(image_path).convert('RGB')
             img_rgb = np.array(image)
@@ -68,11 +82,14 @@ class AttributesPredictor:
                     faces.append((xmin, ymin, width, height))
 
             return faces, image
-        except Exception as e:
+        except Exception:
             logger.error("Error in detect_faces", exc_info=True)
             raise
 
-    def analyze_image(self, image_path):
+    def analyze_image(self, image_path: str):
+        """
+
+        """
         results = []
         try:
             faces, image = self.detect_faces(image_path)
@@ -109,6 +126,9 @@ class AttributesPredictor:
         return results
 
     def predict_age(self, face_data):
+        """
+        
+        """
         try:
             input_details = self.age_interpreter.get_input_details()
             output_details = self.age_interpreter.get_output_details()
@@ -130,11 +150,14 @@ class AttributesPredictor:
             ]
             age_idx = np.argmax(output_data)
             return age_ranges[age_idx]
-        except Exception as e:
+        except Exception:
             logger.error("Error in predict_age", exc_info=True)
             raise
 
     def predict_gender(self, face_data):
+        """
+        
+        """
         try:
             input_details = self.gender_interpreter.get_input_details()
             output_details = self.gender_interpreter.get_output_details()
@@ -146,11 +169,14 @@ class AttributesPredictor:
             genders = ["Female", "Male"]
             genders_idx = np.argmax(output_data)
             return genders[genders_idx]
-        except Exception as e:
+        except Exception:
             logger.error("Error in predict_gender", exc_info=True)
             raise
 
     def predict_emotion(self, face_data):
+        """
+        
+        """
         try:
             input_details = self.emotion_interpreter.get_input_details()
             output_details = self.emotion_interpreter.get_output_details()
@@ -162,6 +188,6 @@ class AttributesPredictor:
             emotions = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
             emotion_idx = np.argmax(prediction)
             return emotions[emotion_idx]
-        except Exception as e:
+        except Exception:
             logger.error("Error in predict_emotion", exc_info=True)
             raise
