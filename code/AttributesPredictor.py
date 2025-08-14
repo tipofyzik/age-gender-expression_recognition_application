@@ -47,14 +47,27 @@ class AttributesPredictor:
             raise
 
     def preprocess_face(self, face_roi, target_size: tuple[int, int]):
-        """
-        
-        """
         try:
-            face_img = face_roi.resize(target_size)
+            face_img = face_roi.copy()
+            target_w, target_h = target_size
+            orig_w, orig_h = face_img.size
+
+            scale = max(target_w / orig_w, target_h / orig_h)
+            new_w = int(orig_w * scale)
+            new_h = int(orig_h * scale)
+
+            face_img = face_img.resize((new_w, new_h), Image.ANTIALIAS)
+
+            left = (new_w - target_w) // 2
+            top = (new_h - target_h) // 2
+            right = left + target_w
+            bottom = top + target_h
+            face_img = face_img.crop((left, top, right, bottom))
+
             face_array = np.array(face_img).astype('float32') / 255.0
             face_array = np.expand_dims(face_array, axis=0)
             return face_array
+
         except Exception:
             logger.error("Error in preprocess_face", exc_info=True)
             raise
