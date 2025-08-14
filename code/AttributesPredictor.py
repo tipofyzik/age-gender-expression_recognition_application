@@ -6,7 +6,7 @@ import logging
 try:
     import tflite_runtime.interpreter as tflite
 except ImportError as e:
-    raise ImportError("tflite_runtime не установлен. Убедитесь, что он указан в requirements в buildozer.spec") from e
+    raise ImportError("tflite_runtime lib is not installed.") from e
 
 """Manually importing library for face detection to work. Library has custom fixes so it suits the project goals.
 Source: https://github.com/patlevin/face-detection-tflite
@@ -107,11 +107,28 @@ class AttributesPredictor:
 
                 age_input = self.preprocess_face(face_roi, target_size=(224, 224))
                 gender_input = self.preprocess_face(face_roi, target_size=(224, 224))
-                emotion_input = self.preprocess_face(face_roi, target_size=(64, 64))
+                emotion_input = self.preprocess_face(face_roi, target_size=(224, 224))
 
-                age = self.predict_age(age_input)
-                gender = self.predict_gender(gender_input)
-                emotion = self.predict_emotion(emotion_input)
+                age = self.predict_feature(age_input, self.age_interpreter, 
+                                       feature_classes = ["4 - 6 years old",
+                                                          "7 - 8 years old",
+                                                          "9 - 11 years old",
+                                                          "12 - 19 years old",
+                                                          "20 - 27 years old",
+                                                          "28 - 35 years old",
+                                                          "36 - 45 years old",
+                                                          "46 - 60 years old",
+                                                          "61 - 75 years old"])
+                gender = self.predict_feature(gender_input, self.gender_interpreter,
+                                             feature_classes = ["Female", "Male"])
+                emotion = self.predict_feature(emotion_input, self.emotion_interpreter,
+                                               feature_classes = ["Angry", 
+                                                                  "Disgust", 
+                                                                  "Fear", 
+                                                                  "Happy", 
+                                                                  "Neutral", 
+                                                                  "Sad", 
+                                                                  "Surprise"])
 
                 results.append({
                     "age": age,
@@ -125,69 +142,22 @@ class AttributesPredictor:
 
         return results
 
-    def predict_age(self, face_data):
+    def predict_feature(self, face_data, feature_interpreter, feature_classes):
         """
         
         """
         try:
-            input_details = self.age_interpreter.get_input_details()
-            output_details = self.age_interpreter.get_output_details()
+            input_details = feature_interpreter.get_input_details()
+            output_details = feature_interpreter.get_output_details()
 
-            self.age_interpreter.set_tensor(input_details[0]['index'], face_data.astype(np.float32))
-            self.age_interpreter.invoke()
-            output_data = self.age_interpreter.get_tensor(output_details[0]['index'])
+            feature_interpreter.set_tensor(input_details[0]['index'], face_data.astype(np.float32))
+            feature_interpreter.invoke()
+            output_data = feature_interpreter.get_tensor(output_details[0]['index'])
 
-            age_ranges = [
-                "4 - 6 years old",
-                "7 - 8 years old",
-                "9 - 11 years old",
-                "12 - 19 years old",
-                "20 - 27 years old",
-                "28 - 35 years old",
-                "36 - 45 years old",
-                "46 - 60 years old",
-                "61 - 75 years old"
-            ]
-            age_idx = np.argmax(output_data)
-            return age_ranges[age_idx]
+            feature_idx = np.argmax(output_data)
+            return feature_classes[feature_idx]
         except Exception:
-            logger.error("Error in predict_age", exc_info=True)
+            logger.error("Error in predicting feature ", exc_info=True)
             raise
 
-    def predict_gender(self, face_data):
-        """
-        
-        """
-        try:
-            input_details = self.gender_interpreter.get_input_details()
-            output_details = self.gender_interpreter.get_output_details()
 
-            self.gender_interpreter.set_tensor(input_details[0]['index'], face_data.astype(np.float32))
-            self.gender_interpreter.invoke()
-            output_data = self.gender_interpreter.get_tensor(output_details[0]['index'])
-
-            genders = ["Female", "Male"]
-            genders_idx = np.argmax(output_data)
-            return genders[genders_idx]
-        except Exception:
-            logger.error("Error in predict_gender", exc_info=True)
-            raise
-
-    def predict_emotion(self, face_data):
-        """
-        
-        """
-        try:
-            input_details = self.emotion_interpreter.get_input_details()
-            output_details = self.emotion_interpreter.get_output_details()
-
-            self.emotion_interpreter.set_tensor(input_details[0]['index'], face_data.astype(np.float32))
-            self.emotion_interpreter.invoke()
-            prediction = self.emotion_interpreter.get_tensor(output_details[0]['index'])[0]
-
-            emotions = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
-            emotion_idx = np.argmax(prediction)
-            return emotions[emotion_idx]
-        except Exception:
-            logger.error("Error in predict_emotion", exc_info=True)
-            raise

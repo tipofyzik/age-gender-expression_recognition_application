@@ -4,10 +4,11 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.camera import Camera
 from kivy.uix.widget import Widget
-from kivy.graphics import PushMatrix, PopMatrix, Rotate
+from kivy.graphics import PushMatrix, PopMatrix, Rotate, Scale
 from kivy.clock import Clock
 import os
 import logging
+from PIL import Image
 
 # For android only
 from jnius import autoclass, cast
@@ -15,11 +16,16 @@ from android.permissions import request_permissions, Permission, check_permissio
 from android import activity
 
 from AttributesPredictor import AttributesPredictor
+import os
+
+Environment = autoclass('android.os.Environment')
 
 
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
 
 class RotatedCameraWidget(Widget):
     def __init__(self, **kwargs):
@@ -118,15 +124,35 @@ class MobileCamera(App):
         self.label = Label(text="Face attributes will appear here", size_hint=(1, 0.3))
         self.layout.add_widget(self.label)
 
+    def get_downloads_path(self):
+        # Получаем путь к /storage/emulated/0/Download
+        downloads_dir = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_DOWNLOADS
+        ).getAbsolutePath()
+        return downloads_dir
+
     def take_picture(self, instance):
         """
-        
+        Сохраняет фото в Downloads и отправляет в обработку
         """
         try:
-            filepath = os.path.join(self.user_data_dir, "photo.png")
+            filename = "IMAGE.png"
+            downloads_path = self.get_downloads_path()
+            filepath = os.path.join(downloads_path, filename)
+
+            # Сохраняем фото сразу в конечный файл
             self.camera_widget.camera.export_to_png(filepath)
-            logger.info(f"Photo saved to {filepath}")
+
+            # Открываем фото, поворачиваем и перезаписываем
+            image = Image.open(filepath)
+            image = image.rotate(90, expand=True)
+            image.save(filepath)
+
+            logger.info(f"Photo saved and rotated at {filepath}")
+            
+            # Запускаем анализ
             self.process_picture(filepath)
+
         except Exception as e:
             logger.error("Error taking picture", exc_info=True)
             self.label.text = f"Camera error: {e}"
