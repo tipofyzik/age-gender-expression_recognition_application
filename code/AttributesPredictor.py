@@ -1,8 +1,7 @@
 from PIL import Image
 import numpy as np
-import logging
 
-# For mobile application
+# Tensorflow-light for mobile app
 try:
     import tflite_runtime.interpreter as tflite
 except ImportError as e:
@@ -17,7 +16,8 @@ from fdlite import FaceDetection, FaceDetectionModel
 
 
 
-# Logger
+# Logging
+import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -25,11 +25,16 @@ logger = logging.getLogger(__name__)
 
 class AttributesPredictor:
     """
-    
+    A class for predicting face attributes (age, gender, emotions).
+    Uses TFLite models and a custom face detector.
     """
     def __init__(self) -> None:
         """
+        Initializes TFLite interpreters for age, gender, and emotion models,
+        and loads the face detection model.
         
+        Raises:
+            Exception: If any of the interpreters or the face detector cannot be initialized.
         """
         try:
             self.age_interpreter = tflite.Interpreter(model_path="models/MobileNet_Age.tflite")
@@ -42,11 +47,28 @@ class AttributesPredictor:
             self.emotion_interpreter.allocate_tensors()
 
             self.face_interpreter = FaceDetection(model_type=FaceDetectionModel.FRONT_CAMERA, model_path="models/")
+
+            self.last_cropped_face = None
         except Exception:
             logger.error("Failed to initialize interpreters or face detector", exc_info=True)
             raise
+        
+    def preprocess_face(self, face_roi: Image.Image, 
+                        target_size: tuple[int, int]) -> np.ndarray:
+        """
+        Preprocesses a face image for model input:
+        resizes, crops, and normalizes it.
 
-    def preprocess_face(self, face_roi, target_size: tuple[int, int]):
+        Args:
+            face_roi (Image.Image): Original face image (PIL).
+            target_size (tuple[int, int]): Desired image size (width, height).
+
+        Returns:
+            np.ndarray: Normalized face image array suitable for inference.
+        
+        Raises:
+            Exception: If an error occurs during preprocessing.
+        """
         try:
             face_img = face_roi.copy()
             target_w, target_h = target_size
@@ -64,6 +86,8 @@ class AttributesPredictor:
             bottom = top + target_h
             face_img = face_img.crop((left, top, right, bottom))
 
+            self.last_cropped_face = face_img.copy()
+
             face_array = np.array(face_img).astype('float32') / 255.0
             face_array = np.expand_dims(face_array, axis=0)
             return face_array
@@ -72,9 +96,20 @@ class AttributesPredictor:
             logger.error("Error in preprocess_face", exc_info=True)
             raise
 
-    def detect_faces(self, image_path):
+    def detect_faces(self, image_path: str) -> tuple[list[tuple[int, int, int, int]], Image.Image]:
         """
+        Detects faces in the given image.
+
+        Args:
+            image_path (str): Path to the image file.
+
+        Returns:
+            tuple[list[tuple[int, int, int, int]], Image.Image]:
+                - A list of face bounding boxes in the format (x, y, w, h),
+                - The original image (PIL.Image).
         
+        Raises:
+            Exception: If face detection fails.
         """
         try:
             image = Image.open(image_path).convert('RGB')
@@ -99,9 +134,23 @@ class AttributesPredictor:
             logger.error("Error in detect_faces", exc_info=True)
             raise
 
-    def analyze_image(self, image_path: str):
+    def analyze_image(self, image_path: str) -> list[dict[str, str | tuple[int, int, int, int]]]:
         """
+        Analyzes the image and predicts age, gender, and emotion
+        for all detected faces.
 
+        Args:
+            image_path (str): Path to the image file.
+
+        Returns:
+            list[dict]: A list of dictionaries with results for each detected face:
+                {
+                    "age": str,
+                    "gender": str,
+                    "emotion": str,
+                    "face_box": (x, y, w, h)
+                }
+            or error messages if analysis fails.
         """
         results = []
         try:
@@ -120,7 +169,8 @@ class AttributesPredictor:
 
                 age_input = self.preprocess_face(face_roi, target_size=(224, 224))
                 gender_input = self.preprocess_face(face_roi, target_size=(224, 224))
-                emotion_input = self.preprocess_face(face_roi, target_size=(224, 224))
+                emotion_input = self.preprocess_face(face_roi.convert('L'), target_size=(48, 48))
+                emotion_input = np.expand_dims(emotion_input, axis=-1)
 
                 age = self.predict_feature(age_input, self.age_interpreter, 
                                        feature_classes = ["4 - 6 years old",
@@ -135,13 +185,13 @@ class AttributesPredictor:
                 gender = self.predict_feature(gender_input, self.gender_interpreter,
                                              feature_classes = ["Female", "Male"])
                 emotion = self.predict_feature(emotion_input, self.emotion_interpreter,
-                                               feature_classes = ["Angry", 
-                                                                  "Disgust", 
-                                                                  "Fear", 
+                                               feature_classes = ["Neutral", 
                                                                   "Happy", 
-                                                                  "Neutral", 
+                                                                  "Surprise", 
                                                                   "Sad", 
-                                                                  "Surprise"])
+                                                                  "Angry", 
+                                                                  "Disgust", 
+                                                                  "Fear"])
 
                 results.append({
                     "age": age,
@@ -155,9 +205,21 @@ class AttributesPredictor:
 
         return results
 
-    def predict_feature(self, face_data, feature_interpreter, feature_classes):
+    def predict_feature(self, face_data: np.ndarray, feature_interpreter: tflite.Interpreter,
+                        feature_classes: list[str]) -> str:
         """
+        Runs inference on a feature (age/gender/emotion) using a TFLite model.
+
+        Args:
+            face_data (np.ndarray): Preprocessed face image data.
+            feature_interpreter (tflite.Interpreter): TFLite interpreter for the feature.
+            feature_classes (list[str]): List of possible feature classes.
+
+        Returns:
+            str: The predicted class label.
         
+        Raises:
+            Exception: If inference fails.
         """
         try:
             input_details = feature_interpreter.get_input_details()
@@ -173,4 +235,11 @@ class AttributesPredictor:
             logger.error("Error in predicting feature ", exc_info=True)
             raise
 
+    def return_cropped_face(self) -> Image.Image:
+        """
+        Returns the last cropped face after preprocessing.
 
+        Returns:
+            Image.Image | None: The cropped PIL face image, or None if no face was processed.
+        """
+        return self.last_cropped_face
