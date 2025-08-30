@@ -84,7 +84,7 @@ class GalleryPicker:
         """
         if requestCode == self.REQUEST_CODE:
             if intent is None:
-                print("[GalleryPicker] Выбор отменён")
+                print("[GalleryPicker] Selection cancelled")
                 if self.on_complete:
                     self.on_complete(None)
                 return
@@ -93,7 +93,7 @@ class GalleryPicker:
             file_path = self.get_file_path_from_uri(uri)
 
             if not file_path:
-                print("[GalleryPicker] Не удалось получить путь к файлу")
+                print("[GalleryPicker] Failed to get file path")
                 if self.on_complete:
                     self.on_complete(None)
                 return

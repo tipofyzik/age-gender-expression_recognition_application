@@ -5,7 +5,8 @@ import numpy as np
 try:
     import tflite_runtime.interpreter as tflite
 except ImportError as e:
-    raise ImportError("tflite_runtime lib is not installed.") from e
+    import tensorflow.lite as tflite
+    # raise ImportError("tflite_runtime lib is not installed.") from e
 
 """Manually importing library for face detection to work. Library has custom fixes so it suits the project goals.
 Source: https://github.com/patlevin/face-detection-tflite

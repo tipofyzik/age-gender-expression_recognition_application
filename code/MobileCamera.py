@@ -134,6 +134,8 @@ class MobileCamera(App):
             logger.warning("Permissions denied.")
             self.label.text = "Permissions denied. Cannot use camera."
 
+
+    # ---------------- USER INTERFACE ----------------
     def initialize_ui(self, *args) -> None:
         """
         Initializes the main user interface after permissions are granted.
@@ -162,6 +164,8 @@ class MobileCamera(App):
         self.label = Label(text="Face attributes will appear here", size_hint=(1, 0.3))
         self.layout.add_widget(self.label)
 
+
+    # ---------------- FILE OPERATIONS ----------------
     def get_downloads_path(self) -> str:
         """
         Retrieves the absolute path to the Android Downloads directory.
@@ -194,6 +198,8 @@ class MobileCamera(App):
             logger.error("Error saving photo", exc_info=True)
             self.label.text = f"Save error: {e}"
 
+
+    # ---------------- IMAGE OPERATIONS ----------------
     def pick_gallery_image(self, instance) -> None:
         """
         Opens the gallery picker to allow the user to select an image.
