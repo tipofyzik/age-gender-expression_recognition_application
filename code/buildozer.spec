@@ -8,7 +8,8 @@ android.add_assets = models/
 source.include_dirs = libs
 version = 0.1
 
-requirements = kivy,numpy,pillow,tflite-runtime
+requirements = kivy==2.3.0,numpy==1.22.3,pillow==8.4.0,tflite-runtime==2.8.0
+
 
 orientation = portrait
 android.api = 30
