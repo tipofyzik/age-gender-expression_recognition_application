@@ -1,6 +1,7 @@
 # Age, gender and expression recognition application
 
 ## 1. Various sources
+### Face-detection-tflite
 In this project, face-detection-tflite library developed by patlevin was used: https://github.com/patlevin/face-detection-tflite  
 
 In the **face_detection.py**, **face_landmark.py**, **iris_landmark.py** files some fixes for the project purposes been made. Namely, I replaced  
@@ -20,4 +21,4 @@ self.interpreter = tflite.Interpreter(model_path=self.model_path)
 ```
 This is done in order to run my mobile application with the **_tflite_runtime_** library but not with the full tensorflow package. In addition, it allowed running application on both pc and mobile device, that came nandy during testing and evaluation phases.
 
-
+### Pretrained models
