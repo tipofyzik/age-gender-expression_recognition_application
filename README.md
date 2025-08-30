@@ -18,4 +18,6 @@ except ImportError as e:
 # Other code
 self.interpreter = tflite.Interpreter(model_path=self.model_path)
 ```
+This is done in order to run my mobile application with the tflite_runtime library but not with the full tensorflow package. In addition, it allowed running application on both pc and mobile device, that came nandy during testing and evaluation phases.
+
 
