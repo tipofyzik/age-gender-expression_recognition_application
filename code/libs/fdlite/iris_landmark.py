@@ -6,10 +6,12 @@ from enum import IntEnum
 import numpy as np
 import os
 
+"""CUSTOM FIXES"""
 try:
     import tflite_runtime.interpreter as tflite
 except ImportError as e:
-    raise ImportError("tflite_runtime не установлен. Убедитесь, что он указан в requirements в buildozer.spec") from e
+    import tensorflow.lite as tflite
+    # raise ImportError("tflite_runtime lib is not installed.") from e
 
 from PIL.Image import Image
 from typing import List, Optional, Sequence, Tuple, Union
@@ -106,7 +108,11 @@ RIGHT_EYE_TO_FACE_LANDMARK_INDEX = [
 ]
 
 # 35mm camera sensor diagonal (36mm * 24mm)
-SENSOR_DIAGONAL_35MM = np.math.sqrt(36 ** 2 + 24 ** 2)
+
+"""CUSTOM FIXES"""
+SENSOR_DIAGONAL_35MM = np.sqrt(36 ** 2 + 24 ** 2)
+# SENSOR_DIAGONAL_35MM = np.math.sqrt(36 ** 2 + 24 ** 2)
+
 # average human iris size
 IRIS_SIZE_IN_MM = 11.8
 

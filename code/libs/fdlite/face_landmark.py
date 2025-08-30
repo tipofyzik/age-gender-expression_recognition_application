@@ -4,10 +4,12 @@
 import os
 import numpy as np
 
+"""CUSTOM FIXES"""
 try:
     import tflite_runtime.interpreter as tflite
 except ImportError as e:
-    raise ImportError("tflite_runtime не установлен. Убедитесь, что он указан в requirements в buildozer.spec") from e
+    import tensorflow.lite as tflite
+    # raise ImportError("tflite_runtime lib is not installed.") from e
 
 from PIL.Image import Image
 from typing import List, Optional, Sequence, Tuple, Union
