@@ -26,4 +26,7 @@ This is done in order to run my mobile application with the **_tflite_runtime_**
 2. MobileNet for age and gender recognition: https://github.com/radualexandrub/Age-Gender-Classification-on-RaspberryPi4-with-TFLite-PyQt5
 3. FER model for emotion recognition: https://github.com/vicksam/fer-model
 
-
+### Datasets for performance evaluation
+1. Gender dataset, folder "Test": https://www.kaggle.com/datasets/rashikrahmanpritom/gender-recognition-dataset
+2. Age dataset, should be adjusted via the **PerformanceEvaluator.py** script: https://www.kaggle.com/datasets/frabbisw/facial-age
+3. Emotion dataset: https://www.kaggle.com/datasets/jonathanoheix/face-expression-recognition-dataset
