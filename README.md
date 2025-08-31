@@ -31,5 +31,5 @@ This is done in order to run my mobile application with the **_tflite_runtime_**
 2. Age dataset, should be adjusted via the **PerformanceEvaluator.py** script: https://www.kaggle.com/datasets/frabbisw/facial-age
 3. Emotion dataset: https://www.kaggle.com/datasets/jonathanoheix/face-expression-recognition-dataset
 
-
+## 2.Evaluation
 To evaluate model performance on both a pc and an edge-device, download the main_eval.py, PerformanceEvaluator.py, and TransformPhoneResultsToMetrics.py files. Rename main_eval.py to main.py (remove the original main.py to the other directory). And build an application with this new main file. Also, download testing datasets from here and unpack them into the download folder on your phone. Dataset can be accessed via the link: https://drive.google.com/drive/folders/1TLMC87HDCJP2mMYNK2AgfMpv3lNRG_M8?usp=drive_link  
