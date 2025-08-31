@@ -79,8 +79,9 @@ class AttributesPredictor:
             new_w = int(orig_w * scale)
             new_h = int(orig_h * scale)
 
-            face_img = face_img.resize((new_w, new_h), Image.ANTIALIAS)
-
+            # face_img = face_img.resize((new_w, new_h), Image.ANTIALIAS)
+            face_img = face_img.resize((new_w, new_h), Image.Resampling.LANCZOS)
+            
             left = (new_w - target_w) // 2
             top = (new_h - target_h) // 2
             right = left + target_w
