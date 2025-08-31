@@ -22,3 +22,8 @@ self.interpreter = tflite.Interpreter(model_path=self.model_path)
 This is done in order to run my mobile application with the **_tflite_runtime_** library but not with the full tensorflow package. In addition, it allowed running application on both pc and mobile device, that came nandy during testing and evaluation phases.
 
 ### Pretrained models
+1. Face-detection-tflite for face detection via a camera (front camera only in this case): https://github.com/patlevin/face-detection-tflite
+2. MobileNet for age and gender recognition: https://github.com/radualexandrub/Age-Gender-Classification-on-RaspberryPi4-with-TFLite-PyQt5
+3. FER model for emotion recognition: https://github.com/vicksam/fer-model
+
+
