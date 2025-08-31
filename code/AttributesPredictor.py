@@ -4,8 +4,10 @@ import numpy as np
 # Tensorflow-light for mobile app
 try:
     import tflite_runtime.interpreter as tflite
+    tflite_backend = "tflite_runtime"
 except ImportError as e:
     import tensorflow.lite as tflite
+    tflite_backend = "tensorflow_lite"
     # raise ImportError("tflite_runtime lib is not installed.") from e
 
 """Manually importing library for face detection to work. Library has custom fixes so it suits the project goals.
@@ -79,8 +81,10 @@ class AttributesPredictor:
             new_w = int(orig_w * scale)
             new_h = int(orig_h * scale)
 
-            # face_img = face_img.resize((new_w, new_h), Image.ANTIALIAS)
-            face_img = face_img.resize((new_w, new_h), Image.Resampling.LANCZOS)
+            if tflite_backend == "tflite_runtime":
+                face_img = face_img.resize((new_w, new_h), Image.ANTIALIAS)
+            else:
+                face_img = face_img.resize((new_w, new_h), Image.Resampling.LANCZOS)
             
             left = (new_w - target_w) // 2
             top = (new_h - target_h) // 2
