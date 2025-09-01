@@ -33,3 +33,9 @@ This is done in order to run my mobile application with the **_tflite_runtime_**
 
 ## 2.Evaluation
 To evaluate model performance on both a pc and an edge-device, download the main_eval.py, PerformanceEvaluator.py, and TransformPhoneResultsToMetrics.py files. Rename main_eval.py to main.py (remove the original main.py to the other directory). And build an application with this new main file. Also, download testing datasets from here and unpack them into the download folder on your phone. Dataset can be accessed via the link: https://drive.google.com/drive/folders/1TLMC87HDCJP2mMYNK2AgfMpv3lNRG_M8?usp=drive_link  
+
+## To build apk
+To build apk you need following files and folders:
+1. Files: AttributesPredictor.py, GalleryPicker.py, MobileCamera.py, main.py, buildozer.spec
+2. Folders: models, libs
+Other files are external and designed to evaluate model performance.
