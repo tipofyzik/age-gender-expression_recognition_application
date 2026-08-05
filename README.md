@@ -71,38 +71,38 @@ The application follows Object-Oriented Programming (OOP) principles to strictly
 | Class | Accuracy | Precision | Recall | F1-Score |
 | :--- | :---: | :---: | :---: | :---: |
 | **Female** | **0.8763** | 0.9275 | 0.7420 | 0.8244 |
-| **Male** | **0.8529** | 0.9627 | 0.9045 | — |
+| **Male** | **0.8763** | 0.8529 | 0.9627 | 0.9045 |
 
 #### Age Recognition Model
 * **Overall Model Accuracy:** **0.4773**
 * **Dataset:** Facial Age Dataset (Kaggle)
 
-| Age Class | Precision | Recall | F1-Score |
-| :--- | :---: | :---: | :---: |
-| **4 - 6 years old** | 0.6348 | 0.8233 | 0.7169 |
-| **7 - 8 years old** | 0.0000 | 0.0000 | 0.0000 |
-| **9 - 11 years old** | 0.0497 | 0.0841 | — |
-| **12 - 19 years old** | 0.5656 | 0.5116 | — |
-| **20 - 27 years old** | 0.4881 | 0.4847 | — |
-| **28 - 35 years old** | 0.3911 | 0.3534 | — |
-| **36 - 45 years old** | 0.2783 | 0.3054 | — |
-| **46 - 60 years old** | 0.7045 | 0.5837 | — |
-| **61 - 75 years old** | 0.4302 | 0.5526 | — |
+| Classes | Model Accuracy | Precision (pc/phone) | Recall (pc/phone) | F1-score (pc/phone) |
+| :--- | :---: | :---: | :---: | :---: |
+| **4-6 years old** | 0.4773 | 0.6348 | 0.8233 | 0.7169 |
+| **7-8 years old** | — | 0.0000 | 0.0000 | 0.0000 |
+| **9-11 years old** | — | 0.2727 | 0.0497 | 0.0841 |
+| **12-19 years old** | — | 0.4670 | 0.5656 | 0.5116 |
+| **20-27 years old** | — | 0.4814 | 0.4881 | 0.4847 |
+| **28-35 years old** | — | 0.3223 | 0.3911 | 0.3534 |
+| **36-45 years old** | — | 0.3383 | 0.2783 | 0.3054 |
+| **46-60 years old** | — | 0.4982 | 0.7045 | 0.5837 |
+| **61-75 years old** | — | 0.7722 | 0.4302 | 0.5526 |
 
 #### Facial Emotion Recognition Model
 * **Overall Model Accuracy:** **0.6172**
 * **Dataset:** Face Expression Recognition Dataset (Kaggle) — Validation Subfolder
 
-| Emotion Class | Precision | Recall | F1-Score |
-| :--- | :---: | :---: | :---: |
-| **Neutral** | 0.4115 | 0.8798 | 0.5607 |
-| **Happy** | 0.8815 | 0.8855 | 0.8835 |
-| **Surprise** | 0.7684 | 0.7425 | — |
-| **Sad** | 0.3513 | 0.4716 | — |
-| **Angry** | 0.4471 | 0.5362 | — |
-| **Disgust** | 0.2062 | 0.3252 | — |
-| **Fear** | 0.1522 | 0.2520 | — |
-| **Contempt** | 0.0000 | 0.0000 | 0.0000 |
+| Classes | Model Accuracy | Precision (pc/phone) | Recall (pc/phone) | F1-score (pc/phone) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Neutral** | 0.6172 | 0.4115 | 0.8798 | 0.5607 |
+| **Happy** | — | 0.8815 | 0.8855 | 0.8835 |
+| **Surprise** | — | 0.7183 | 0.7684 | 0.7425 |
+| **Sad** | — | 0.5148 | 0.3513 | 0.4716 |
+| **Angry** | — | 0.6695 | 0.4471 | 0.5362 |
+| **Disgust** | — | 0.7692 | 0.2062 | 0.3252 |
+| **Fear** | — | 0.7319 | 0.1522 | 0.2520 |
+| **Contempt** | — | 0.0000 | 0.0000 | 0.0000 |
 
 ---
 
@@ -111,26 +111,15 @@ The application follows Object-Oriented Programming (OOP) principles to strictly
 * **Mobile Hardware:** Octa-core CPU (2x2.3 GHz Kryo 470 Gold & 6x1.8 GHz Kryo 470 Silver)
 * **PC Hardware:** AMD Ryzen 5 5500U @ 2.10 GHz
 
-| Execution Target / Mode | Total Time | Throughput Rate |
+| Device | Time | Rate (image/second) |
 | :--- | :---: | :---: |
-| **PC CPU (AMD Ryzen 5)** | 47 sec | **27.21 img/s** |
-| **Mobile Phone (Foreground)** | 2 min, 46 sec | **7.70 img/s** |
-| **Mobile Phone (Background)** | 12 min, 48 sec | **1.67 img/s** |
+| **PC** | 47 sec | 27.2127 |
+| **Mobile phone** | 2 min, 46 sec | 7.7048 |
+| **Mobile phone (background)** | 12 min, 48 sec | 1.6654 |
 
 ---
 
 ## Installation & Build Instructions
-
-### Prerequisites
-* Python 3.8+
-* `kivy == 2.3.0`
-* `numpy == 1.22.3`
-* `pillow == 8.4.0`
-* `tflite-runtime == 2.8.0` (for mobile ARM platforms)
-* `tensorflow` (for desktop/PC development and evaluation)
-
----
-
 ### Compiling APK with Buildozer (Ubuntu Linux)
 
 Building an `.apk` package requires a Linux environment (Ubuntu is recommended).
@@ -154,7 +143,9 @@ Building an `.apk` package requires a Linux environment (Ubuntu is recommended).
    └── models/
        ├── MobileNet_Age.tflite
        ├── MobileNet_Gender.tflite
+       ├── face_detection_front.tflite
        └── emotion_model.tflite
+   
    ```
 
 3. **Install Build Dependencies:**
