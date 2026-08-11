@@ -77,7 +77,7 @@ The application follows Object-Oriented Programming (OOP) principles to strictly
 * **Overall Model Accuracy:** **0.4773**
 * **Dataset:** Facial Age Dataset (Kaggle)
 
-| Classes | Model Accuracy | Precision (pc/phone) | Recall (pc/phone) | F1-score (pc/phone) |
+| Classes | Model Overall Accuracy | Precision (pc/phone) | Recall (pc/phone) | F1-score (pc/phone) |
 | :--- | :---: | :---: | :---: | :---: |
 | **4-6 years old** | 0.4773 | 0.6348 | 0.8233 | 0.7169 |
 | **7-8 years old** | — | 0.0000 | 0.0000 | 0.0000 |
@@ -93,7 +93,7 @@ The application follows Object-Oriented Programming (OOP) principles to strictly
 * **Overall Model Accuracy:** **0.6172**
 * **Dataset:** Face Expression Recognition Dataset (Kaggle) — Validation Subfolder
 
-| Classes | Model Accuracy | Precision (pc/phone) | Recall (pc/phone) | F1-score (pc/phone) |
+| Classes | Model Overall Accuracy | Precision (pc/phone) | Recall (pc/phone) | F1-score (pc/phone) |
 | :--- | :---: | :---: | :---: | :---: |
 | **Neutral** | 0.6172 | 0.4115 | 0.8798 | 0.5607 |
 | **Happy** | — | 0.8815 | 0.8855 | 0.8835 |
