@@ -79,15 +79,15 @@ The application follows Object-Oriented Programming (OOP) principles to strictly
 
 | Classes | Model Accuracy | Precision (pc/phone) | Recall (pc/phone) | F1-score (pc/phone) |
 | :--- | :---: | :---: | :---: | :---: |
-| **4-6 years old** | 0.4773 | 0.6348 | 0.8233 | 0.7169 |
-| **7-8 years old** | — | 0.0000 | 0.0000 | 0.0000 |
-| **9-11 years old** | — | 0.2727 | 0.0497 | 0.0841 |
-| **12-19 years old** | — | 0.4670 | 0.5656 | 0.5116 |
-| **20-27 years old** | — | 0.4814 | 0.4881 | 0.4847 |
-| **28-35 years old** | — | 0.3223 | 0.3911 | 0.3534 |
-| **36-45 years old** | — | 0.3383 | 0.2783 | 0.3054 |
-| **46-60 years old** | — | 0.4982 | 0.7045 | 0.5837 |
-| **61-75 years old** | — | 0.7722 | 0.4302 | 0.5526 |
+| **4-6 years old** | rowspan="9" align="center"> | 0.6348 | 0.8233 | 0.7169 |
+| **7-8 years old** |  | 0.0000 | 0.0000 | 0.0000 |
+| **9-11 years old** |  | 0.2727 | 0.0497 | 0.0841 |
+| **12-19 years old** |  | 0.4670 | 0.5656 | 0.5116 |
+| **20-27 years old** |  | 0.4814 | 0.4881 | 0.4847 |
+| **28-35 years old** |  | 0.3223 | 0.3911 | 0.3534 |
+| **36-45 years old** |  | 0.3383 | 0.2783 | 0.3054 |
+| **46-60 years old** |  | 0.4982 | 0.7045 | 0.5837 |
+| **61-75 years old** |  | 0.7722 | 0.4302 | 0.5526 |
 
 #### Facial Emotion Recognition Model
 * **Overall Model Accuracy:** **0.6172**
